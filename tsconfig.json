@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "jsx": "react",
+        "outDir": "build",
+        "experimentalDecorators": true,
+        "strictNullChecks": true,
+        "removeComments": true
+    },
+    "exclude": [
+        "node_modules",
+        "build",
+        "public"
+    ],
+    "awesomeTypescriptLoaderOptions": {
+        "transpileModule": true
+    }
+}
