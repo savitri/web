@@ -21,8 +21,9 @@ interface WindowCustom extends Window {
 declare const window: WindowCustom;
 
 const context: Context = {
+    appState: new Stores.AppState(window.__INITIAL_STATE__.appState),
     editionsStore: new Stores.EditionsStore(window.__INITIAL_STATE__.editionsStore),
-    appState: new Stores.AppState(window.__INITIAL_STATE__.appState)
+    sectionsStore: new Stores.SectionsStore(window.__INITIAL_STATE__.sectionsStore)
 };
 
 if (process.env.NODE_ENV !== "production") {

@@ -15,7 +15,7 @@ export const routes = Object.assign(DefaultExport, {
             component: Test
         },
         {
-            path: "/read",
+            path: "/read/:book/:canto/:section",
             component: Read
         }
     ]

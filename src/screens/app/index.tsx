@@ -9,12 +9,11 @@ import { observer, inject } from "mobx-react";
 import * as Stores from "../../stores";
 import { SideNav } from "./SideNav";
 
-interface AppProps {
-    router: ReactRouter.InjectedRouter;
-}
+interface AppProps { }
 
 interface InjectedProps extends AppProps {
     editionsStore: Stores.EditionsStore;
+    router: ReactRouter.InjectedRouter;
     appState: Stores.AppState;
 }
 
@@ -32,7 +31,7 @@ export class App extends React.Component<AppProps, {}> {
 
     handleTitleTouchTap = () => {
 
-        this.props.router.push("/");
+        this.injected.router.push("/");
     }
 
     handleLeftIconClicked = () => {

@@ -1216,6 +1216,16 @@ https-browserify@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-0.0.1.tgz#3f91365cabe60b77ed0ebba24b454e3e09d95a82"
 
+"https://github.com/savitri/shared.git#1.0.4":
+  name savitri-shared
+  version "1.0.4"
+  resolved "https://github.com/savitri/shared.git#7f9eebaddfa5babbf4cdadbe0dc8bb97743f359e"
+  dependencies:
+    diacritics "^1.2.3"
+    joi "^9.2.0"
+    sanscript "^0.0.2"
+    speakingurl "^10.0.0"
+
 hyphenate-style-name@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.2.tgz#31160a36930adaf1fc04c6074f7eb41465d4ec4b"

@@ -1,9 +1,11 @@
 import * as React from "react";
-import { Drawer, SelectField, MenuItem, List, ListItem, Subheader } from "material-ui";
+import { Drawer, SelectField, MenuItem, List, ListItem } from "material-ui";
 import { observer, inject } from "mobx-react";
 import { Models } from "savitri-shared";
+import { withRouter, InjectedRouter } from "react-router";
 
 import * as Stores from "../../stores";
+import { Read } from "../read";
 
 interface SideNavProps {
     open: boolean;
@@ -11,7 +13,10 @@ interface SideNavProps {
 }
 
 interface InjectedProps extends SideNavProps {
+    router: InjectedRouter;
+    appState: Stores.AppState;
     editionsStore: Stores.EditionsStore;
+    sectionsStore: Stores.SectionsStore;
 }
 
 class CustomListItem extends ListItem {
@@ -28,7 +33,8 @@ class CustomListItem extends ListItem {
     }
 }
 
-@inject("editionsStore")
+@inject("editionsStore", "appState", "sectionsStore")
+@withRouter
 @observer
 export class SideNav extends React.Component<SideNavProps, {}> {
     private injected: InjectedProps;
@@ -41,7 +47,7 @@ export class SideNav extends React.Component<SideNavProps, {}> {
 
     componentWillUpdate(nextProps: SideNavProps) {
 
-        if (nextProps.open && this.injected.editionsStore) {
+        if (nextProps.open) {
 
             this.injected.editionsStore.getEditionsList();
         }
@@ -89,31 +95,44 @@ export class SideNav extends React.Component<SideNavProps, {}> {
                 primaryTogglesNestedList
                 primaryText={book.title}
                 secondaryText={book.heading}
-                nestedItems={book.cantos.map(this.getCantosTOC)}
+                nestedItems={this.getCantosTOC(book)}
                 secondaryTextLines={2}
                 />
         );
     }
 
-    private getCantosTOC = (canto: Models.CantoTOC) => {
+    private getCantosTOC = (book: Models.BookTOC) => {
 
-        return (
+        return book.cantos.map((canto) =>
             <CustomListItem
                 key={canto.no}
                 primaryText={canto.title}
                 secondaryText={canto.heading}
-                nestedItems={canto.sections.map(this.getSectionsTOC)}
+                nestedItems={this.getSectionsTOC(book, canto)}
                 secondaryTextLines={2}
-                />
-        );
+                // tslint:disable-next-line
+                onTouchTap={() => {
+
+                    this.injected.appState.setSidenavOpen(false);
+                    this.injected.sectionsStore.setShownCanto(canto);
+                    this.injected.router.push(Read.URL(book.no, canto.no, 1));
+                } }
+                />);
     }
 
-    private getSectionsTOC = (section: Models.SectionTOC) => {
+    private getSectionsTOC = (book: Models.BookTOC, canto: Models.CantoTOC) => {
 
-        return (
+        return canto.sections.map((section) =>
             <ListItem
                 key={section.no}
                 secondaryText={section.heading}
+                // tslint:disable-next-line
+                onTouchTap={() => {
+
+                    this.injected.appState.setSidenavOpen(false);
+                    this.injected.sectionsStore.setShownCanto(canto);
+                    this.injected.router.push(Read.URL(book.no, canto.no, section.no));
+                } }
                 />
         );
     }
