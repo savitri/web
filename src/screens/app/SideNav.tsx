@@ -55,7 +55,7 @@ export class SideNav extends React.Component<SideNavProps, {}> {
 
     handleEditionSelected = (event: any, index: number, value: number) => {
 
-        this.injected.editionsStore.setShownEdition(value);
+        this.injected.editionsStore.getSelectedEdition(value);
     }
 
     private getEditionList() {
@@ -70,57 +70,62 @@ export class SideNav extends React.Component<SideNavProps, {}> {
 
     private getTOC = () => {
 
-        if (!this.injected.editionsStore.shownEdition) {
+        const {selectedEdition, getEditionObj} = this.injected.editionsStore;
+
+        const selectedEditionObj = getEditionObj(selectedEdition);
+
+        if (!selectedEditionObj) {
             return;
         }
 
-        return this.injected.editionsStore.shownEdition.toc.parts.map(part => {
+        const edition = selectedEditionObj.year !== 1950 ? selectedEditionObj.year : undefined;
+        return selectedEditionObj.toc.parts.map(part => {
 
             return (
                 <ListItem
                     key={part.no}
                     primaryText={part.heading}
                     primaryTogglesNestedList
-                    nestedItems={part.books.map(this.getBooksTOC)}
+                    nestedItems={this.getBooksTOC(part, edition)}
                     />
             );
         });
     }
 
-    private getBooksTOC = (book: Models.BookTOC) => {
+    private getBooksTOC = (part: Models.PartTOC, edition?: number) => {
 
-        return (
+        return part.books.map(book =>
             <CustomListItem
                 key={book.no}
                 primaryTogglesNestedList
                 primaryText={book.title}
                 secondaryText={book.heading}
-                nestedItems={this.getCantosTOC(book)}
+                nestedItems={this.getCantosTOC(book, edition)}
                 secondaryTextLines={2}
                 />
         );
     }
 
-    private getCantosTOC = (book: Models.BookTOC) => {
+    private getCantosTOC = (book: Models.BookTOC, edition?: number) => {
 
         return book.cantos.map((canto) =>
             <CustomListItem
                 key={canto.no}
                 primaryText={canto.title}
                 secondaryText={canto.heading}
-                nestedItems={this.getSectionsTOC(book, canto)}
+                nestedItems={this.getSectionsTOC(book, canto, edition)}
                 secondaryTextLines={2}
                 // tslint:disable-next-line
                 onTouchTap={() => {
 
                     this.injected.appState.setSidenavOpen(false);
-                    this.injected.sectionsStore.setShownCanto(canto);
-                    this.injected.router.push(Read.URL(book.no, canto.no, 1));
+                    this.injected.sectionsStore.setShownSectionNumber(book.no, canto.no, 1, edition);
+                    this.injected.router.push(Read.URL(book.no, canto.no, 1, edition));
                 } }
                 />);
     }
 
-    private getSectionsTOC = (book: Models.BookTOC, canto: Models.CantoTOC) => {
+    private getSectionsTOC = (book: Models.BookTOC, canto: Models.CantoTOC, edition?: number) => {
 
         return canto.sections.map((section) =>
             <ListItem
@@ -130,8 +135,8 @@ export class SideNav extends React.Component<SideNavProps, {}> {
                 onTouchTap={() => {
 
                     this.injected.appState.setSidenavOpen(false);
-                    this.injected.sectionsStore.setShownCanto(canto);
-                    this.injected.router.push(Read.URL(book.no, canto.no, section.no));
+                    this.injected.sectionsStore.setShownSectionNumber(book.no, canto.no, section.no, edition);
+                    this.injected.router.push(Read.URL(book.no, canto.no, section.no, edition));
                 } }
                 />
         );

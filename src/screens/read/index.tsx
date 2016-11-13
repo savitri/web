@@ -1,12 +1,13 @@
 import * as React from "react";
+import * as History from "history";
+import { Paper } from "material-ui";
 import { observer, inject } from "mobx-react";
 
 import * as Stores from "../../stores";
 import { SavitriHeader } from "./SavitriHeader";
 import { SavitriBody } from "./SavitriBody";
 
-interface ReadProps {
-}
+interface ReadProps { }
 
 export interface ReadRouterParams {
     book: number;
@@ -14,22 +15,35 @@ export interface ReadRouterParams {
     section: number;
 }
 
+interface ReadRouterQuery {
+    edition: number;
+}
+
 interface InjectedProps {
     params: ReadRouterParams;
+    location: History.Location;
     sectionsStore: Stores.SectionsStore;
+    editionsStore: Stores.EditionsStore;
 }
 
 function fetchData(context: InjectedProps, props?: ReadProps) {
 
-    return context.sectionsStore.getSection(context.params);
+    const edition = (context.location.query as any).edition;
+
+    const { book, canto, section} = context.params;
+
+    return Promise.all([
+        context.sectionsStore.getSection(book, canto, section, edition),
+        context.editionsStore.getShownEdition(edition)
+    ]);
 }
 
-@inject("sectionsStore")
+@inject("sectionsStore", "editionsStore")
 @observer
 export class Read extends React.Component<ReadProps, {}> {
     private injected: InjectedProps;
-    static URL = (book: number, canto: number, section: number) =>
-        `/read/${book}/${canto}/${section}`;
+    static URL = (book: number, canto: number, section: number, edition?: number) =>
+        `/read/${book}/${canto}/${section}` + (edition ? `?edition=${edition}` : "");
 
     constructor(props: ReadProps) {
         super(props);
@@ -50,13 +64,24 @@ export class Read extends React.Component<ReadProps, {}> {
 
         const shownSection = this.injected.sectionsStore.shownSection;
 
+        if (!shownSection) {
+
+            return null;
+        }
+
         return (
             <div className="row">
-                <div className="col-xs-offset-2 col-xs-8">
-                    {shownSection && <SavitriHeader />}
-                    {shownSection && <SavitriBody />}
-                </div>
+                <Paper zDepth={1} style={styles.self} className="col-xs-offset-2 col-xs-8">
+                    <SavitriHeader />
+                    <SavitriBody />
+                </Paper>
             </div>
         );
     }
 }
+
+const styles = {
+    self: {
+        padding: 20
+    }
+};

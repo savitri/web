@@ -1,3 +1,5 @@
+import { PlainRoute } from "react-router";
+
 import { App } from "../screens/app";
 import { Home } from "../screens/app/Home";
 import { Test } from "../screens/test";
@@ -5,7 +7,7 @@ import { Read } from "../screens/read";
 
 import DefaultExport from "./DefaultExport";
 
-export const routes = Object.assign(DefaultExport, {
+const plainRoutes: PlainRoute = {
     path: "/",
     component: App,
     indexRoute: { component: Home },
@@ -19,4 +21,6 @@ export const routes = Object.assign(DefaultExport, {
             component: Read
         }
     ]
-});
+};
+
+export const routes = Object.assign(DefaultExport, plainRoutes);

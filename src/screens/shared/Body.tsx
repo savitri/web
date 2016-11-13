@@ -1,7 +1,7 @@
 import * as React from "react";
 
 interface BodyProps {
-    content: string;
+    content: string | string[];
 }
 
 export class Body extends React.Component<BodyProps, {}> {

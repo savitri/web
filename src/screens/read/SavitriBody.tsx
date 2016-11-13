@@ -2,7 +2,7 @@ import * as React from "react";
 import { observer, inject } from "mobx-react";
 
 import * as Stores from "../../stores";
-import { Body } from "../shared/Body";
+import { Sentence } from "./Sentence";
 
 interface SavitriBodyProps { }
 
@@ -20,12 +20,22 @@ export class SavitriBody extends React.Component<SavitriBodyProps, {}> {
         super(props);
         this.injected = props as InjectedProps;
     }
+
     render() {
 
+        const {sentences, running_no} = this.injected.sectionsStore.shownSection.section;
+
         return (
-            <Body
-                content={this.injected.sectionsStore.shownSection.sentences[0].lines.join("\n")}
-                />
+            <div>
+                {sentences.map(sentence =>
+                    <Sentence
+                        sentence={sentence.lines}
+                        sectionRunningNo={running_no}
+                        sentenceNo={sentence.no}
+                        key={sentence.no}
+                        />
+                )}
+            </div>
         );
     }
 }
