@@ -12,7 +12,7 @@ export class NavButtons extends React.Component<NavButtonsProps, {}> {
     render() {
         return (
             <div>
-                <FlatButton label="Text" {...this.props} containerElement={<Link to="/read" />} />
+                <FlatButton label="Text" {...this.props} containerElement={<Link to="/read/1/1/1" />} />
                 <FlatButton {...this.props} label="Journals" containerElement={<Link to="/test" />} />
             </div>
         );
