@@ -69,11 +69,14 @@ export class Read extends React.Component<ReadProps, {}> {
         }
 
         return (
-            <div className="row">
-                <Paper zDepth={1} style={styles.self} className="col-xs-offset-2 col-xs-8">
-                    <SavitriHeader />
-                    <SavitriBody />
-                </Paper>
+            <div>
+                <div className="row">
+                    <Paper zDepth={1} style={styles.self} className="col-lg-offset-2 col-lg-8 col-md-offset-1 col-md-10 col-sm-12 col-xs-12">
+                        <SavitriHeader />
+                        <SavitriBody />
+                    </Paper>
+
+                </div>
             </div>
         );
     }
