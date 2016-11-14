@@ -41,10 +41,23 @@ export class Sentence extends React.Component<SentenceProps, {}> {
     render() {
 
         return (
-            <div className="row" style={{ display: "flex", marginBottom: -15 }}>
+            <div className="row" style={styles.self}>
                 <p className="col-lg-10">{this.linesWithBreaks}</p>
-                <div className="col-lg-2" style={{ alignSelf: "flex-end", marginBottom: 16 }}>{this.reference}</div>
+                <div className="col-lg-2" style={styles.reference}>{this.reference}</div>
             </div>
         );
     }
 }
+
+const styles = {
+    self: {
+        display: "flex",
+        marginBottom: -15
+    } as React.CSSProperties,
+    reference: {
+        alignSelf: "flex-end",
+        marginBottom: 16,
+        display: "flex",
+        justifyContent: "flex-end"
+    } as React.CSSProperties
+};

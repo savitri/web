@@ -153,8 +153,8 @@ export class SideNav extends React.Component<SideNavProps, {}> {
                     onChange={this.handleEditionSelected}
                     value={selectedEdition}
                     fullWidth
-                    menuStyle={{ padding: "0 16px" }}
-                    floatingLabelStyle={{ padding: "0 22px" }}
+                    menuStyle={styles.editionMenuStyle}
+                    floatingLabelStyle={styles.editionLabelStyle}
                     >
                     {this.getEditionList()}
                 </SelectField>
@@ -174,5 +174,11 @@ const styles = {
     secondaryText: {
         fontSize: "100%",
         color: "rgba(0, 0, 0, 0.870588)"
+    },
+    editionMenuStyle: {
+        padding: "0 16px"
+    },
+    editionLabelStyle: {
+        padding: "0 22px"
     }
 };
