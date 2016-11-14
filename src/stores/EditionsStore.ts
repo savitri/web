@@ -144,7 +144,7 @@ export class EditionsStore {
                 const matchingSection = matchingCanto.sections.find(sectionObj => sectionObj.no === section);
 
                 selectedSection = {
-                    edition,
+                    edition: editionObj.title,
                     matchingBook,
                     matchingCanto,
                     matchingSection
