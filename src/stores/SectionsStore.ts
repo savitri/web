@@ -13,6 +13,8 @@ interface SectionNumber extends ReadRouterParams {
     edition?: number;
 }
 
+let instance: SectionsStore;
+
 export class SectionsStore {
     @observable shownSectionURL: string;
     @observable shownCanto: Models.CantoTOC;
@@ -21,7 +23,17 @@ export class SectionsStore {
     private sectionsMap: ObservableMap<SectionResponse>;
     private loadingSections: Set<string>;
 
-    constructor(initialState: SectionsStore) {
+    static getInstance(initialState?: SectionsStore) {
+
+        if (!instance) {
+
+            instance = new SectionsStore(initialState);
+        }
+
+        return instance;
+    }
+
+    private constructor(initialState?: SectionsStore) {
 
         this.sectionsMap = <any>map();
         this.loadingSections = new Set([]);

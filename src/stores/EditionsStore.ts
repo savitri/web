@@ -3,6 +3,8 @@ import { Models } from "savitri-shared";
 
 import { fetchData } from "../shared/utils";
 
+let instance: EditionsStore;
+
 export class EditionsStore {
     @observable selectedEdition: number;
     @observable shownEdition: number;
@@ -11,7 +13,17 @@ export class EditionsStore {
     private loadingEditions: Set<string>;
     private loadingAllEditions: boolean;
 
-    constructor(inititialState: EditionsStore) {
+    static getInstance(initialState?: EditionsStore) {
+
+        if (!instance) {
+
+            instance = new EditionsStore(initialState);
+        }
+
+        return instance;
+    }
+
+    private constructor(inititialState?: EditionsStore) {
 
         this.editionsList = [];
         this.editionsMap = <any>map();
