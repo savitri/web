@@ -14,12 +14,9 @@ interface InjectedProps {
 @inject("editionsStore", "sectionsStore")
 @observer
 export class SavitriHeader extends React.Component<SavitriHeaderProps, {}> {
-    private injected: InjectedProps;
+    get injected() {
 
-    constructor(props: SavitriHeaderProps) {
-
-        super(props);
-        this.injected = props as InjectedProps;
+        return this.props as InjectedProps;
     }
 
     render() {
@@ -30,6 +27,11 @@ export class SavitriHeader extends React.Component<SavitriHeaderProps, {}> {
         const section = getSectionDetails(
             shownSectionNumber.book, shownSectionNumber.canto,
             shownSectionNumber.section, shownSectionNumber.edition);
+
+        if (!section) {
+
+            return null;
+        }
 
         return (
             <div>

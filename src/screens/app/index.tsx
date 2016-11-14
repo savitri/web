@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as History from "history";
 import { AppBar } from "material-ui";
 import { withRouter } from "react-router";
 import * as ReactRouter from "react-router";
@@ -15,18 +16,16 @@ interface InjectedProps extends AppProps {
     editionsStore: Stores.EditionsStore;
     router: ReactRouter.InjectedRouter;
     appState: Stores.AppState;
+    location: History.Location;
 }
 
 @inject("editionsStore", "appState")
 @withRouter
 @observer
 export class App extends React.Component<AppProps, {}> {
-    private injected: InjectedProps;
+    get injected() {
 
-    constructor(props: AppProps) {
-
-        super(props);
-        this.injected = props as any;
+        return this.props as InjectedProps;
     }
 
     handleTitleTouchTap = () => {
@@ -36,7 +35,9 @@ export class App extends React.Component<AppProps, {}> {
 
     handleLeftIconClicked = () => {
 
+        const edition: string = (this.injected.location.query as any).edition || "1950";
         this.injected.appState.setSidenavOpen(true);
+        this.injected.editionsStore.setSelectedEdition(parseInt(edition));
     }
 
     handleDrawerRequestClose = () => {

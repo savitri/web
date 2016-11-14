@@ -25,6 +25,8 @@ export class EditionsStore {
 
     @action setSelectedEdition = (edition: number) => {
 
+        edition = edition || 1950;
+
         this.selectedEdition = edition;
     }
 
@@ -75,7 +77,7 @@ export class EditionsStore {
 
     getEditionsList = () => {
 
-        if (this.editionsList.length) {
+        if (this.editionsList.length > 0) {
 
             return;
         }
@@ -108,6 +110,13 @@ export class EditionsStore {
     getSectionDetails = (book: number, canto: number, section: number, edition?: number) => {
 
         edition = edition || 1950;
+
+        const editionObj = this.editionsMap.get(edition.toString());
+
+        if (!editionObj) {
+
+            return;
+        }
 
         const editionTOC = this.editionsMap.get(edition.toString()).toc;
 

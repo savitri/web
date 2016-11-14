@@ -13,17 +13,21 @@ interface InjectedProps extends SavitriBodyProps {
 @inject("sectionsStore")
 @observer
 export class SavitriBody extends React.Component<SavitriBodyProps, {}> {
-    private injected: InjectedProps;
+    get injected() {
 
-    constructor(props: SavitriBodyProps) {
-
-        super(props);
-        this.injected = props as InjectedProps;
+        return this.props as InjectedProps;
     }
 
     render() {
 
-        const {sentences, running_no} = this.injected.sectionsStore.shownSection.section;
+        const { shownSection } = this.injected.sectionsStore;
+
+        if (!shownSection) {
+
+            return null;
+        }
+
+        const {sentences, running_no} = shownSection.section;
 
         return (
             <div>

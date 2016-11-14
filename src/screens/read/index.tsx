@@ -19,7 +19,7 @@ interface ReadRouterQuery {
     edition: number;
 }
 
-interface InjectedProps {
+interface InjectedProps extends ReadProps {
     params: ReadRouterParams;
     location: History.Location;
     sectionsStore: Stores.SectionsStore;
@@ -30,7 +30,7 @@ function fetchData(context: InjectedProps, props?: ReadProps) {
 
     const edition = (context.location.query as any).edition;
 
-    const { book, canto, section} = context.params;
+    const { book, canto, section } = context.params;
 
     return Promise.all([
         context.sectionsStore.getSection(book, canto, section, edition),
@@ -41,14 +41,13 @@ function fetchData(context: InjectedProps, props?: ReadProps) {
 @inject("sectionsStore", "editionsStore")
 @observer
 export class Read extends React.Component<ReadProps, {}> {
-    private injected: InjectedProps;
+    get injected() {
+
+        return this.props as InjectedProps;
+    }
+
     static URL = (book: number, canto: number, section: number, edition?: number) =>
         `/read/${book}/${canto}/${section}` + (edition ? `?edition=${edition}` : "");
-
-    constructor(props: ReadProps) {
-        super(props);
-        this.injected = props as InjectedProps;
-    }
 
     componentDidMount() {
 

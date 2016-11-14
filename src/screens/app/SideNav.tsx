@@ -37,20 +37,14 @@ class CustomListItem extends ListItem {
 @withRouter
 @observer
 export class SideNav extends React.Component<SideNavProps, {}> {
-    private injected: InjectedProps;
+    get injected() {
 
-    constructor(props: SideNavProps) {
-
-        super(props);
-        this.injected = props as any;
+        return this.props as InjectedProps;
     }
 
     componentWillUpdate(nextProps: SideNavProps) {
 
-        if (nextProps.open) {
-
-            this.injected.editionsStore.getEditionsList();
-        }
+        this.injected.editionsStore.getEditionsList();
     }
 
     handleEditionSelected = (event: any, index: number, value: number) => {
@@ -60,12 +54,13 @@ export class SideNav extends React.Component<SideNavProps, {}> {
 
     private getEditionList() {
 
-        return this.injected.editionsStore.editionsList.map(edition =>
-            <MenuItem
-                key={edition.year}
-                value={edition.year}
-                primaryText={edition.title}
-                />);
+        const { editionsList } = this.injected.editionsStore;
+
+        return editionsList.map((edition, index) => <MenuItem
+            key={index}
+            value={edition.year}
+            primaryText={edition.title}
+            />);
     }
 
     private getTOC = () => {
@@ -144,6 +139,8 @@ export class SideNav extends React.Component<SideNavProps, {}> {
 
     render() {
 
+        const { selectedEdition } = this.injected.editionsStore;
+
         return (
             <Drawer
                 open={this.props.open}
@@ -154,7 +151,7 @@ export class SideNav extends React.Component<SideNavProps, {}> {
                 <SelectField
                     floatingLabelText="Select an edition"
                     onChange={this.handleEditionSelected}
-                    value={this.injected.editionsStore.selectedEdition}
+                    value={selectedEdition}
                     fullWidth
                     menuStyle={{ padding: "0 16px" }}
                     floatingLabelStyle={{ padding: "0 22px" }}
