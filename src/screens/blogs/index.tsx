@@ -64,7 +64,7 @@ export class Blogs extends React.Component<BlogsProps, {}> {
                 <div className="col-lg-offset-2 col-lg-8 col-md-offset-1 col-md-10 col-sm-12 col-xs-12">
                     <h1 style={styles.blogTitle}>{blog.title}</h1>
                     {posts.map((post, index) => <PostCard key={index} post={post} />)}
-                    <FlatButton secondary label="Load more" onTouchTap={this.handleLoadMoreBlogPosts} style={styles.loadMore} />
+                    <FlatButton label="Load more" onTouchTap={this.handleLoadMoreBlogPosts} style={styles.loadMore} />
                 </div>
             </div>
         );
@@ -76,6 +76,8 @@ const styles = {
         marginTop: 20
     },
     blogTitle: {
-        fontFamily: "sans-serif"
-    }
+        fontFamily: "sans-serif",
+        padding: "0 16px",
+        marginBottom: 50
+    } as React.CSSProperties
 };
