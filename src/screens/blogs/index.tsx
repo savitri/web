@@ -1,6 +1,9 @@
 import * as React from "react";
 import { observer, inject } from "mobx-react";
-import { FlatButton } from "material-ui";
+import { FlatButton, FloatingActionButton } from "material-ui";
+import { ContentAdd } from "material-ui/svg-icons";
+import * as ReactRouter from "react-router";
+import { Models } from "savitri-shared";
 
 import * as Stores from "../../stores";
 import { PostCard } from "./PostCard";
@@ -14,6 +17,7 @@ export interface ReadRouterParams {
 interface InjectedProps extends BlogsProps {
     blogsStore: Stores.BlogsStore;
     params: ReadRouterParams;
+    router: ReactRouter.InjectedRouter;
 }
 
 function fetchData(context: InjectedProps) {
@@ -22,6 +26,7 @@ function fetchData(context: InjectedProps) {
 }
 
 @inject("blogsStore")
+@ReactRouter.withRouter
 @observer
 export class Blogs extends React.Component<BlogsProps, {}> {
     static URL = (blogSlug: string) => `/blogs/${blogSlug}`;
@@ -41,9 +46,16 @@ export class Blogs extends React.Component<BlogsProps, {}> {
         return fetchData(newProps);
     }
 
-    handleLoadMoreBlogPosts = () => {
+    handleSeeMoreBlogPosts = () => {
 
         this.injected.blogsStore.getMoreBlogPosts(this.injected.params.blogSlug);
+    }
+
+    handleFABClicked = () => {
+
+        const slug = this.injected.params.blogSlug;
+
+        this.injected.router.push(Models.Post.getPostURL(slug, "new"));
     }
 
     render() {
@@ -64,7 +76,13 @@ export class Blogs extends React.Component<BlogsProps, {}> {
                 <div className="col-lg-offset-2 col-lg-8 col-md-offset-1 col-md-10 col-sm-12 col-xs-12">
                     <h1 style={styles.blogTitle}>{blog.title}</h1>
                     {posts.map((post, index) => <PostCard key={index} post={post} />)}
-                    <FlatButton label="Load more" onTouchTap={this.handleLoadMoreBlogPosts} style={styles.loadMore} />
+                    <FlatButton label="See more" onTouchTap={this.handleSeeMoreBlogPosts} style={styles.seeMore} />
+                    <FloatingActionButton
+                        onTouchTap={this.handleFABClicked}
+                        style={styles.fab}
+                        >
+                        <ContentAdd />
+                    </FloatingActionButton>
                 </div>
             </div>
         );
@@ -72,12 +90,17 @@ export class Blogs extends React.Component<BlogsProps, {}> {
 }
 
 const styles = {
-    loadMore: {
+    seeMore: {
         marginTop: 20
     },
     blogTitle: {
         fontFamily: "sans-serif",
         padding: "0 16px",
         marginBottom: 50
-    } as React.CSSProperties
+    } as React.CSSProperties,
+    fab: {
+        position: "fixed",
+        right: 25,
+        bottom: 25
+    }
 };

@@ -4,6 +4,7 @@ import { App } from "../screens/app";
 import { Home } from "../screens/app/Home";
 import { Blogs } from "../screens/blogs";
 import { Read } from "../screens/read";
+import { PostEditor } from "../screens/editor";
 
 import DefaultExport from "./DefaultExport";
 
@@ -19,7 +20,11 @@ const plainRoutes: PlainRoute = {
         {
             path: "/read/:book/:canto/:section",
             component: Read
-        }
+        },
+        {
+            path: "/blogs/:blogSlug/posts/new",
+            component: PostEditor
+        },
     ]
 };
 
