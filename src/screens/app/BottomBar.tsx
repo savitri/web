@@ -1,11 +1,13 @@
 import * as React from "react";
 import { Paper, FontIcon } from "material-ui";
+import { observer } from "mobx-react";
 const BottomNavigation = require("material-ui/BottomNavigation");
 
 interface BottomBarProps { }
 
 interface InjectedProps extends BottomBarProps { }
 
+@observer
 export class BottomBar extends React.Component<BottomBarProps, {}> {
     render() {
 

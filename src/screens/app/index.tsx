@@ -1,12 +1,11 @@
 import * as React from "react";
 import * as History from "history";
 import { AppBar } from "material-ui";
-import { withRouter } from "react-router";
 import * as ReactRouter from "react-router";
-import { Layout } from "./Layout";
-import { NavButtons } from "./NavButtons";
 import { observer, inject } from "mobx-react";
 
+import { Layout } from "./Layout";
+import { NavButtons } from "./NavButtons";
 import * as Stores from "../../stores";
 import { SideNav } from "./SideNav";
 
@@ -20,7 +19,7 @@ interface InjectedProps extends AppProps {
 }
 
 @inject("editionsStore", "appState")
-@withRouter
+@ReactRouter.withRouter
 @observer
 export class App extends React.Component<AppProps, {}> {
     get injected() {

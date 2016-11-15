@@ -2,7 +2,7 @@ import { PlainRoute } from "react-router";
 
 import { App } from "../screens/app";
 import { Home } from "../screens/app/Home";
-import { Test } from "../screens/test";
+import { Blogs } from "../screens/blogs";
 import { Read } from "../screens/read";
 
 import DefaultExport from "./DefaultExport";
@@ -13,8 +13,8 @@ const plainRoutes: PlainRoute = {
     indexRoute: { component: Home },
     childRoutes: [
         {
-            path: "/test",
-            component: Test
+            path: "/blogs/:blogSlug",
+            component: Blogs
         },
         {
             path: "/read/:book/:canto/:section",
