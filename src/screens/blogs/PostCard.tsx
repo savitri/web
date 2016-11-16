@@ -6,7 +6,6 @@ import { observable, action } from "mobx";
 const md = require("markdown-it")({
     html: true,
     linkify: true,
-    typographer: true,
     breaks: true
 });
 
@@ -20,12 +19,12 @@ interface InjectedProps extends PostCardProps { }
 export class PostCard extends React.Component<PostCardProps, {}> {
     @observable htmlText: string;
 
-    @action setHtmlText = (mdText: string) => {
+    @action setHtmlText(mdText: string) {
 
         this.htmlText = md.render(mdText);
     }
 
-    handleExpandChange = () => {
+    handleExpandChange() {
 
         if (!this.htmlText) {
 
@@ -37,7 +36,26 @@ export class PostCard extends React.Component<PostCardProps, {}> {
 
         const date = new Date(dateString);
 
-        return date.getDate() + 1 + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+        return date.getDate() + 1 + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+    }
+
+    get headerSubtitle() {
+
+        const { post } = this.props;
+
+        let subtitle = "";
+
+        if (post.number) {
+
+            subtitle += `#${post.number}`;
+        }
+
+        if (post.published_at) {
+
+            subtitle += ` • ${this.getFormattedDate(post.published_at)}`;
+        }
+
+        return subtitle;
     }
 
     render() {
@@ -45,12 +63,12 @@ export class PostCard extends React.Component<PostCardProps, {}> {
         const { post } = this.props;
 
         return (
-            <Card style={styles.self} onExpandChange={this.handleExpandChange}>
-                <CardHeader
+            <Card style={styles.self} onExpandChange={this.handleExpandChange.bind(this)}>
+                {post.series_id || this.headerSubtitle ? <CardHeader
                     title={post.series_id}
-                    subtitle={"Published " + (post.published_at && this.getFormattedDate(post.published_at))}
+                    subtitle={this.headerSubtitle}
                     actAsExpander={true}
-                    />
+                    /> : null}
                 <CardTitle
                     title={post.title}
                     subtitle={post.subtitle}
@@ -63,8 +81,7 @@ export class PostCard extends React.Component<PostCardProps, {}> {
                 <CardActions
                     expandable
                     >
-                    <FlatButton label="Action1" />
-                    <FlatButton label="Action2" />
+                    <FlatButton label="Comment" />
                 </CardActions>
             </Card>
         );

@@ -5,4 +5,5 @@ export interface Context {
     editionsStore: Stores.EditionsStore;
     sectionsStore: Stores.SectionsStore;
     blogsStore: Stores.BlogsStore;
+    postsStore: Stores.PostsStore;
 }

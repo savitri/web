@@ -6,7 +6,7 @@ import { observer, inject } from "mobx-react";
 import { observable, action } from "mobx";
 
 import * as Stores from "../../stores";
-import { Blogs } from "../blogs";
+import { BlogPosts } from "../blogs";
 import { Read } from "../read";
 
 interface NavButtonsProps { }
@@ -68,7 +68,7 @@ export class NavButtons extends React.Component<NavButtonsProps, {}> {
     handleMenuItemClicked(slug: string) {
 
         this.handleJournalPopoverRequestClose();
-        this.injected.router.push(Blogs.URL(slug));
+        this.injected.router.push(BlogPosts.URL(slug));
     }
 
     private getBlogsList() {

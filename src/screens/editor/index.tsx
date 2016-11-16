@@ -1,20 +1,25 @@
 import * as React from "react";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import { observable, action } from "mobx";
 import { Paper, TextField, FlatButton, Dialog, RadioButton, RadioButtonGroup, DatePicker, TimePicker } from "material-ui";
 import { amber500 } from "material-ui/styles/colors";
 import * as ReactRouter from "react-router";
+import { Models } from "savitri-shared";
 const md = require("markdown-it")({
     html: true,
     linkify: true,
-    typographer: true,
     breaks: true
 });
+
+import * as Stores from "../../stores";
 
 interface PostEditorProps { }
 
 interface InjectedProps extends PostEditorProps {
     router: ReactRouter.InjectedRouter;
+    postsStore: Stores.PostsStore;
+    blogsStore: Stores.BlogsStore;
+    params: { blogSlug: string };
 }
 
 interface PostEditorRefs {
@@ -24,9 +29,9 @@ interface PostEditorRefs {
     excerpt: TextField;
     content: TextField;
     tags: TextField;
+    datePicker: DatePicker;
+    timePicker: TimePicker;
 }
-
-// type PublishOptions = "save" | "now" | "schedule";
 
 enum Publish {
     Save,
@@ -34,6 +39,7 @@ enum Publish {
     Schedule
 }
 
+@inject("postsStore", "blogsStore")
 @ReactRouter.withRouter
 @observer
 export class PostEditor extends React.Component<PostEditorProps, {}> {
@@ -41,6 +47,8 @@ export class PostEditor extends React.Component<PostEditorProps, {}> {
     @observable private previewMode = false;
     @observable private mdContent: string = "";
     @observable private scheduled: Publish = Publish.Save;
+    private scheduledDate: number;
+    private scheduledTime: number;
     private htmlContent = "";
 
     @action private handleShowConfirmDialog = () => {
@@ -58,7 +66,9 @@ export class PostEditor extends React.Component<PostEditorProps, {}> {
         this.confirmDialogOpen = false;
 
         setTimeout(() => {
-            this.injected.router.goBack();
+
+            const blogUrl = Models.Blog.getPostsURL(this.injected.params.blogSlug);
+            this.injected.router.push(blogUrl);
         }, 500);
     }
 
@@ -129,19 +139,76 @@ export class PostEditor extends React.Component<PostEditorProps, {}> {
 
     private get formData() {
 
+        const excerpt = this.componentRefs.excerpt.getValue().trim();
+        const subtitle = this.componentRefs.subtitle.getValue().trim();
+
         return {
             title: this.componentRefs.title.getValue().trim(),
-            content: this.mdContent,
-            excerpt: this.componentRefs.excerpt.getValue().trim(),
-            seriesTitle: this.componentRefs.seriesTitle.getValue().trim(),
-            subtitle: this.componentRefs.subtitle.getValue().trim(),
-            tags: this.componentRefs.tags.getValue().trim()
+            txt: this.mdContent,
+            excerpt: excerpt.length ? excerpt : undefined,
+            // seriesTitle: this.componentRefs.seriesTitle.getValue().trim(),
+            subtitle: subtitle.length ? subtitle : undefined,
+            // tags: this.componentRefs.tags.getValue().trim()
         };
+    }
+
+    private getStatusFromPublishOptions = (option: Publish) => {
+
+        switch (option) {
+            case Publish.Save: return "draft";
+            // case Publish.Post: return "scheduled";
+            case Publish.Post: return "published";
+            case Publish.Schedule: return "scheduled";
+        }
+    }
+
+    private getPublishedDate = () => {
+
+        if (this.scheduled === Publish.Save) {
+
+            return;
+        }
+        else if (this.scheduled === Publish.Post) {
+
+            return new Date();
+        }
+
+        const scheduleDate = new Date(this.scheduledDate);
+
+        const scheduledTime = new Date(this.scheduledTime);
+
+        const scheduledHours = scheduledTime.getHours();
+
+        const scheduledMinutes = scheduledTime.getMinutes();
+
+        scheduleDate.setHours(scheduledHours, scheduledMinutes);
+
+        return scheduleDate;
     }
 
     private handleSaveClicked = () => {
 
-        console.log("save", this.formData);
+        const blogSlug = this.injected.params.blogSlug;
+        const blogObj = this.injected.blogsStore.blogsList.find(blog => blog.slug === blogSlug);
+
+        const payload = Object.assign({}, this.formData, {
+            blog_id: blogObj.id as any,
+            author_id: 1,
+            slug: this.formData.title.split(" ").join("-"),
+            status: this.getStatusFromPublishOptions(this.scheduled),
+            script: "ro",
+            created_at: new Date().toString(),
+            published_at: this.getPublishedDate()
+        });
+
+        const newPost = new Models.Post(payload as any);
+
+        this.injected.postsStore.tryCreatingPost(blogSlug, newPost.model)
+            .then(() => {
+
+                const blogUrl = Models.Blog.getPostsURL(this.injected.params.blogSlug);
+                this.injected.router.push(blogUrl);
+            });
     }
 
     private handlePreviewClicked = () => {
@@ -175,7 +242,7 @@ export class PostEditor extends React.Component<PostEditorProps, {}> {
         ];
     }
 
-    private renderHtml = (): any => {
+    private renderHtml = () => {
 
         if (this.previewMode) {
 
@@ -195,6 +262,16 @@ export class PostEditor extends React.Component<PostEditorProps, {}> {
             primary
             onTouchTap={this.handleSaveClicked}
             />;
+    }
+
+    private handleDatePicked = (event: null, value: Date) => {
+
+        this.scheduledDate = value.getTime();
+    }
+
+    private handleTimePicked = (event: null, value: Date) => {
+
+        this.scheduledTime = value.getTime();
     }
 
     private getScheduleOptions = () => {
@@ -228,10 +305,14 @@ export class PostEditor extends React.Component<PostEditorProps, {}> {
 
         return (
             <div style={{ display: "flex", justifyContent: "space-around" }}>
-                <DatePicker floatingLabelText="Pick a date" />
+                <DatePicker
+                    floatingLabelText="Pick a date"
+                    onChange={this.handleDatePicked}
+                    />
                 <TimePicker
                     floatingLabelText="Choose the time"
                     format="24hr"
+                    onChange={this.handleTimePicked}
                     />
             </div>
         );

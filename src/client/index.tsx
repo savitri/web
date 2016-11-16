@@ -24,7 +24,8 @@ const context: Context = {
     appState: Stores.AppState.getInstance(window.__INITIAL_STATE__.appState),
     editionsStore: Stores.EditionsStore.getInstance(window.__INITIAL_STATE__.editionsStore),
     sectionsStore: Stores.SectionsStore.getInstance(window.__INITIAL_STATE__.sectionsStore),
-    blogsStore: Stores.BlogsStore.getInstance()
+    blogsStore: Stores.BlogsStore.getInstance(),
+    postsStore: Stores.PostsStore.getInstance()
 };
 
 if (process.env.NODE_ENV !== "production") {

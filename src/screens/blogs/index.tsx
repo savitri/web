@@ -28,8 +28,8 @@ function fetchData(context: InjectedProps) {
 @inject("blogsStore")
 @ReactRouter.withRouter
 @observer
-export class Blogs extends React.Component<BlogsProps, {}> {
-    static URL = (blogSlug: string) => `/blogs/${blogSlug}`;
+export class BlogPosts extends React.Component<BlogsProps, {}> {
+    static URL = (blogSlug: string) => `/blogs/${blogSlug}/posts`;
 
     get injected() {
 
@@ -75,7 +75,7 @@ export class Blogs extends React.Component<BlogsProps, {}> {
             <div className="row">
                 <div className="col-lg-offset-2 col-lg-8 col-md-offset-1 col-md-10 col-sm-12 col-xs-12">
                     <h1 style={styles.blogTitle}>{blog.title}</h1>
-                    {posts.map((post, index) => <PostCard key={index} post={post} />)}
+                    {posts.map(post => <PostCard key={post.id} post={post} />)}
                     <FlatButton label="See more" onTouchTap={this.handleSeeMoreBlogPosts} style={styles.seeMore} />
                     <FloatingActionButton
                         onTouchTap={this.handleFABClicked}

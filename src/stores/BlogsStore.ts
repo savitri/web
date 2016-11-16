@@ -9,6 +9,7 @@ export class BlogsStore {
     @observable blogsList: Models.IBlog[];
     blogPostPage: { [key: string]: number };
     @observable blogPosts: ObservableMap<Models.IPost[]>;
+    private loadingBlogPosts: Set<string>;
 
     static getInstance() {
 
@@ -25,6 +26,7 @@ export class BlogsStore {
         this.blogsList = [];
         this.blogPosts = map({}) as any;
         this.blogPostPage = {};
+        this.loadingBlogPosts = new Set([]);
     }
 
     @action setBlogsList = (blogs: Models.IBlog[]) => {
@@ -49,7 +51,12 @@ export class BlogsStore {
             return;
         }
 
-        return this.fetchBlogPosts(blogSlug);
+        if (!this.loadingBlogPosts.has(blogSlug)) {
+
+            this.loadingBlogPosts.add(blogSlug);
+            return this.fetchBlogPosts(blogSlug);
+        }
+
     }
 
     getMoreBlogPosts = (blogSlug: string) => {
@@ -84,6 +91,10 @@ export class BlogsStore {
 
         return fetchData<Models.IPost[]>(Models.Blog.getPostsURL(blogSlug, page))
             .then((posts) => this.addBlogPosts(blogSlug, posts))
-            .then(() => this.updateBlogPostPage(blogSlug, page));
+            .then(() => {
+
+                this.updateBlogPostPage(blogSlug, page);
+                this.loadingBlogPosts.delete(blogSlug);
+            });
     }
 }

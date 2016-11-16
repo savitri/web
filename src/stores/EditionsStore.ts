@@ -83,8 +83,12 @@ export class EditionsStore {
             return;
         }
 
-        return this.fetchEdition(Models.Edition.getEditionsURL(edition))
-            .then(edition => this.setShownEdition(edition));
+        if (!this.loadingEditions.has(edition.toString())) {
+
+            return this.fetchEdition(Models.Edition.getEditionsURL(edition))
+                .then(edition => this.setShownEdition(edition));
+        }
+
     }
 
     getEditionsList = () => {
@@ -94,7 +98,12 @@ export class EditionsStore {
             return;
         }
 
-        return this.fetchEditions(Models.Edition.getEditionsURL());
+        if (!this.loadingAllEditions) {
+
+            this.loadingAllEditions = true;
+            return this.fetchEditions(Models.Edition.getEditionsURL());
+        }
+
     }
 
     getBookName = (book: number, edition?: number) => {
@@ -160,8 +169,6 @@ export class EditionsStore {
     }
 
     private fetchEditions = (editionsURL: string) => {
-
-        this.loadingAllEditions = true;
 
         return fetchData<Models.IEdition[]>(editionsURL)
             .then(this.setEditionsList)
