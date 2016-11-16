@@ -1,13 +1,12 @@
 import * as React from "react";
-import { Paper } from "material-ui";
 
 export class Home extends React.Component<{}, {}> {
     render() {
 
         return (
-            <Paper zDepth={0}>
-                Welcome to Savitri.
-            </Paper>
+            <div style={{ display: "flex", justifyContent: "center", paddingTop: 60 }}>
+                <img src="/static/img/sri-aurobindo-symbol.png" />
+            </div>
         );
     }
 }
