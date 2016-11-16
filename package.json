@@ -11,13 +11,11 @@
   "scripts": {
     "start": "per-env",
     "start:development": "npm run serve",
-    "start:production": "npm run buildServer && npm run buildClient && npm run serve",
-    "build-server": "tsc",
-    "build-server-test": "tsc --noEmit",
-    "buildClient": "webpack --config config/webpack.config.prod.js",
+    "start:production": "npm run build-client && npm run serve",
+    "build-client": "webpack --config config/webpack.config.prod.js",
     "serve": "per-env",
     "serve:development": "ts-node -F src/server/dev-server",
-    "serve:production": "nohup node -r dotenv/config build/server/prodServer &",
+    "serve:production": "ts-node -F src/server/prod-server",
     "compile": "tsc --noEmit",
     "lint": "tslint -c ./tslint.json './src/**/*.ts?(x)'"
   },

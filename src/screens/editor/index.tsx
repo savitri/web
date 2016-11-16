@@ -333,7 +333,7 @@ export class PostEditor extends React.Component<PostEditorProps, {}> {
                             inputStyle={styles.textField}
                             />
                         <TextField
-                            floatingLabelText="Post title"
+                            floatingLabelText="Post title*"
                             floatingLabelStyle={{ color: amber500 }}
                             fullWidth
                             disabled={this.previewMode}
@@ -358,7 +358,7 @@ export class PostEditor extends React.Component<PostEditorProps, {}> {
                             inputStyle={styles.textField}
                             />
                         <TextField
-                            floatingLabelText="Content"
+                            floatingLabelText="Content*"
                             floatingLabelStyle={{ color: amber500 }}
                             fullWidth
                             rows={20}
