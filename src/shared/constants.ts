@@ -7,6 +7,7 @@ export const muiThemeOptions = getMuiTheme({
         primary1Color: amber500,
         primary2Color: amber700,
         primary3Color: amber100,
-        accent1Color: amber900
+        accent1Color: amber900,
+        pickerHeaderColor: amber700
     }
 });
