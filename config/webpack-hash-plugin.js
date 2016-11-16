@@ -5,7 +5,7 @@ function WebpackHashPlugin(options) { }
 
 WebpackHashPlugin.prototype.apply = function (compiler) {
     compiler.plugin("done", function (stats) {
-        var outputFile = "../public/webpack.hash.json";
+        var outputFile = "../public/config/webpack.hash.json";
         var outputFilePath = path.join(__dirname, outputFile);
 
         try {

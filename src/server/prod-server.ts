@@ -8,7 +8,7 @@ require("dotenv").config();
 const TemplateServer = require("./plugins/template-server");
 const StaticFileServer = require("./plugins/file-server");
 
-const bundleName = JSON.parse(readFileSync("public/webpack.hash.json", "utf-8")).main;
+const bundleName = JSON.parse(readFileSync("public/config/webpack.hash.json", "utf-8")).main;
 
 const server = new Hapi.Server();
 
