@@ -2,14 +2,16 @@ import { observable, action, computed, ObservableMap, map } from "mobx";
 import { Models } from "savitri-shared";
 
 import { fetchData } from "../shared/utils";
-import { ReadRouterParams } from "../screens/read";
 
 interface SectionResponse {
     canto: Models.ICanto;
     section: Models.ISection;
 }
 
-interface SectionNumber extends ReadRouterParams {
+interface SectionNumber {
+    book: number;
+    canto: number;
+    section: number;
     edition?: number;
 }
 
