@@ -1,43 +1,42 @@
 import * as React from "react";
+import * as History from "history";
 import { AppBar } from "material-ui";
-import { withRouter } from "react-router";
 import * as ReactRouter from "react-router";
-import { Layout } from "./Layout";
-import { NavButtons } from "./NavButtons";
 import { observer, inject } from "mobx-react";
 
+import { Layout } from "./Layout";
+import { NavButtons } from "./NavButtons";
 import * as Stores from "../../stores";
 import { SideNav } from "./SideNav";
 
-interface AppProps {
-    router: ReactRouter.InjectedRouter;
-}
+interface AppProps { }
 
 interface InjectedProps extends AppProps {
     editionsStore: Stores.EditionsStore;
+    router: ReactRouter.InjectedRouter;
     appState: Stores.AppState;
+    location: History.Location;
 }
 
 @inject("editionsStore", "appState")
-@withRouter
+@ReactRouter.withRouter
 @observer
 export class App extends React.Component<AppProps, {}> {
-    private injected: InjectedProps;
+    get injected() {
 
-    constructor(props: AppProps) {
-
-        super(props);
-        this.injected = props as any;
+        return this.props as InjectedProps;
     }
 
     handleTitleTouchTap = () => {
 
-        this.props.router.push("/");
+        this.injected.router.push("/");
     }
 
     handleLeftIconClicked = () => {
 
+        const edition: string = (this.injected.location.query as any).edition || "1950";
         this.injected.appState.setSidenavOpen(true);
+        this.injected.editionsStore.setSelectedEdition(parseInt(edition));
     }
 
     handleDrawerRequestClose = () => {

@@ -21,8 +21,11 @@ interface WindowCustom extends Window {
 declare const window: WindowCustom;
 
 const context: Context = {
-    editionsStore: new Stores.EditionsStore(window.__INITIAL_STATE__.editionsStore),
-    appState: new Stores.AppState(window.__INITIAL_STATE__.appState)
+    appState: Stores.AppState.getInstance(window.__INITIAL_STATE__.appState),
+    editionsStore: Stores.EditionsStore.getInstance(window.__INITIAL_STATE__.editionsStore),
+    sectionsStore: Stores.SectionsStore.getInstance(window.__INITIAL_STATE__.sectionsStore),
+    blogsStore: Stores.BlogsStore.getInstance(),
+    postsStore: Stores.PostsStore.getInstance()
 };
 
 if (process.env.NODE_ENV !== "production") {

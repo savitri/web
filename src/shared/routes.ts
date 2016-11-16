@@ -1,22 +1,31 @@
+import { PlainRoute } from "react-router";
+
 import { App } from "../screens/app";
 import { Home } from "../screens/app/Home";
-import { Test } from "../screens/test";
+import { BlogPosts } from "../screens/blogs";
 import { Read } from "../screens/read";
+import { PostEditor } from "../screens/editor";
 
 import DefaultExport from "./DefaultExport";
 
-export const routes = Object.assign(DefaultExport, {
+const plainRoutes: PlainRoute = {
     path: "/",
     component: App,
     indexRoute: { component: Home },
     childRoutes: [
         {
-            path: "/test",
-            component: Test
+            path: "/blogs/:blogSlug/posts",
+            component: BlogPosts
         },
         {
-            path: "/read",
+            path: "/read/:book/:canto/:section",
             component: Read
-        }
+        },
+        {
+            path: "/blogs/:blogSlug/posts/new",
+            component: PostEditor
+        },
     ]
-});
+};
+
+export const routes = Object.assign(DefaultExport, plainRoutes);

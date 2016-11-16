@@ -1,16 +1,29 @@
-import { observable, action, computed, ObservableMap, map } from "mobx";
+import { observable, action, ObservableMap, map } from "mobx";
 import { Models } from "savitri-shared";
 
 import { fetchData } from "../shared/utils";
 
+let instance: EditionsStore;
+
 export class EditionsStore {
     @observable selectedEdition: number;
+    @observable shownEdition: number;
     @observable editionsList: Models.IEdition[];
-    private editionsMap: ObservableMap<Models.IEdition>;
+    @observable private editionsMap: ObservableMap<Models.IEdition>;
     private loadingEditions: Set<string>;
     private loadingAllEditions: boolean;
 
-    constructor(inititialState: EditionsStore) {
+    static getInstance(initialState?: EditionsStore) {
+
+        if (!instance) {
+
+            instance = new EditionsStore(initialState);
+        }
+
+        return instance;
+    }
+
+    private constructor(inititialState?: EditionsStore) {
 
         this.editionsList = [];
         this.editionsMap = <any>map();
@@ -22,14 +35,16 @@ export class EditionsStore {
         this.editionsList = editions;
     }
 
-    @action setShownEdition = (year: number) => {
+    @action setSelectedEdition = (edition: number) => {
 
-        this.selectedEdition = year;
+        edition = edition || 1950;
 
-        if (!this.editionsMap.has(year.toString())) {
+        this.selectedEdition = edition;
+    }
 
-            this.fetchEdition(Models.Edition.getEditionsURL(year));
-        }
+    @action setShownEdition = (edition: number) => {
+
+        this.shownEdition = edition;
     }
 
     @action addEdition = (edition: Models.IEdition) => {
@@ -37,39 +52,127 @@ export class EditionsStore {
         this.editionsMap.set(edition.year.toString(), edition);
     }
 
-    @computed get shownEdition() {
+    getEditionObj = (edition: number) => {
 
-        if (this.selectedEdition) {
+        edition = edition || 1950;
 
-            return this.editionsMap.get(this.selectedEdition.toString());
+        return this.editionsMap.get(edition.toString());
+    }
+
+    getSelectedEdition = (edition?: number) => {
+
+        edition = edition || 1950;
+
+        if (this.editionsMap.has(edition.toString())) {
+
+            this.setSelectedEdition(edition);
+            return;
         }
 
-        // return {};
+        return this.fetchEdition(Models.Edition.getEditionsURL(edition))
+            .then(edition => this.setSelectedEdition(edition));
+    }
+
+    getShownEdition = (edition?: number) => {
+
+        edition = edition || 1950;
+
+        if (this.editionsMap.has(edition.toString())) {
+
+            this.setShownEdition(edition);
+            return;
+        }
+
+        if (!this.loadingEditions.has(edition.toString())) {
+
+            return this.fetchEdition(Models.Edition.getEditionsURL(edition))
+                .then(edition => this.setShownEdition(edition));
+        }
+
     }
 
     getEditionsList = () => {
 
-        if (this.editionsList.length) {
+        if (this.editionsList.length > 0) {
 
-            // this.setShownEdition(this.editionsList[0].year);
             return;
         }
 
-        return this.fetchEditions(Models.Edition.getEditionsURL());
+        if (!this.loadingAllEditions) {
+
+            this.loadingAllEditions = true;
+            return this.fetchEditions(Models.Edition.getEditionsURL());
+        }
+
+    }
+
+    getBookName = (book: number, edition?: number) => {
+
+        edition = edition || 1950;
+        const editionTOC = this.editionsMap.get(edition.toString()).toc;
+
+        let bookObj: any = {};
+        editionTOC.parts.find(part => {
+
+            const matchingBook = part.books.find(bookObj => bookObj.no === book);
+
+            if (matchingBook) {
+
+                bookObj = matchingBook;
+                return true;
+            }
+
+            return false;
+        });
+
+        return <Models.BookTOC>bookObj;
+    }
+
+    getSectionDetails = (book: number, canto: number, section: number, edition?: number) => {
+
+        edition = edition || 1950;
+
+        const editionObj = this.editionsMap.get(edition.toString());
+
+        if (!editionObj) {
+
+            return;
+        }
+
+        const editionTOC = this.editionsMap.get(edition.toString()).toc;
+
+        let selectedSection: any = {};
+        editionTOC.parts.find(part => {
+
+            const matchingBook = part.books.find(bookObj => bookObj.no === book);
+
+            if (matchingBook) {
+
+                const matchingCanto = matchingBook.cantos.find(cantoObj => cantoObj.no === canto);
+
+                const matchingSection = matchingCanto.sections.find(sectionObj => sectionObj.no === section);
+
+                selectedSection = {
+                    edition: editionObj.title,
+                    matchingBook,
+                    matchingCanto,
+                    matchingSection
+                };
+
+                return true;
+            }
+
+            return false;
+        });
+
+        return selectedSection;
     }
 
     private fetchEditions = (editionsURL: string) => {
 
-        this.loadingAllEditions = true;
-
         return fetchData<Models.IEdition[]>(editionsURL)
             .then(this.setEditionsList)
             .then(() => this.loadingAllEditions = false);
-        // .then(() => {
-
-        //     this.setShownDocumentURL(editionsURL);
-        //     this.loadingDocs.delete(editionsURL);
-        // });
     }
 
     private fetchEdition = (editionURL: string) => {
@@ -77,7 +180,11 @@ export class EditionsStore {
         this.loadingEditions.add(editionURL);
 
         return fetchData<Models.IEdition>(editionURL)
-            .then(this.addEdition)
-            .then(() => this.loadingEditions.delete(editionURL));
+            .then(edition => {
+
+                this.addEdition(edition);
+                this.loadingEditions.delete(editionURL);
+                return edition.year;
+            });
     }
 }
