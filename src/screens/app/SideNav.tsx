@@ -78,7 +78,7 @@ export class SideNav extends React.Component<SideNavProps, {}> {
 
             return (
                 <ListItem
-                    key={part.no}
+                    key={`${selectedEditionObj.id}-${part.no}`}
                     primaryText={part.heading}
                     primaryTogglesNestedList
                     nestedItems={this.getBooksTOC(part, edition)}

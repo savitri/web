@@ -9,14 +9,10 @@ import { SavitriBody } from "./SavitriBody";
 
 interface ReadProps { }
 
-export interface ReadRouterParams {
-    book: number;
-    canto: number;
-    section: number;
-}
-
-interface ReadRouterQuery {
-    edition: number;
+interface ReadRouterParams {
+    book: string;
+    canto: string;
+    section: string;
 }
 
 interface InjectedProps extends ReadProps {
@@ -28,12 +24,14 @@ interface InjectedProps extends ReadProps {
 
 function fetchData(context: InjectedProps, props?: ReadProps) {
 
-    const edition = (context.location.query as any).edition;
+    const editionStr: string = (context.location.query as any).edition;
+
+    const edition = editionStr && editionStr.trim().length > 0 ? parseInt(editionStr) : undefined;
 
     const { book, canto, section } = context.params;
 
     return Promise.all([
-        context.sectionsStore.getSection(book, canto, section, edition),
+        context.sectionsStore.getSection(parseInt(book), parseInt(canto), parseInt(section), edition),
         context.editionsStore.getShownEdition(edition)
     ]);
 }

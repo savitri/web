@@ -29,11 +29,11 @@ module.exports = {
             {
                 test: /\.[jt]?sx?$/,
                 exclude: /node_modules/,
-                loaders: ['react-hot-loader/webpack', 'awesome-typescript']
+                use: ['react-hot-loader/webpack', 'awesome-typescript']
             },
             {
                 test: /\.json$/,
-                loaders: ['json']
+                use: 'json'
             }
         ]
     },
